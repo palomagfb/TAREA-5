@@ -1,52 +1,34 @@
-Hacemos referencia al botón Get Info y escuchamos el evento click
-documento.getElementById('btnGetInfo').addEventListener('click', () => fetchData());
+let number = 0;
+let data = null; // Variable para almacenar los datos obtenidos de ajax.json
+const button = document.getElementById('btn');
+const titleArea = document.getElementById("title");
+const contentArea = document.getElementById("content");
+const videoArea = document.getElementById("video");
 
-Hacemos referencia al contenedor para el card 
-const cardContainer = documento.getElementById('cardContainer');
-
-función fetchData() {
-
-    Crea números aleatorios para ir modificando el número del personaje
-    const randomCharacter = Matemáticas.piso(Matemáticas.aleatorio() * 826);
-
-    // URL de la API de RICK AND MORTY
-    const url = 'https://rickandmortyapi.com/api/character/${randomCharacter}'
-    // Crea un objeto XMLHTTPRequest
-    const api = new XMLHttpRequest();
-
-    // Configurar el tipo de solicitud y la URL
-    API.open('GET', url, true);
-
-    Define una función de callback que se ejecuta cuando la solicitud se completa
-    API.onreadystatechange = () => {
-
-        // Comprueba el estado del servidor que todo este OK
-        Si (api.status === 200 && api.readyState === 4) {
-
-            Procesa la respuesta del servidor 
-            const data = JSON.parse(api.responseText);
-
-            consola.log(api.responseText);
-
-            Actualiza e inserta código HTML desde javascript dentro del div con id="cardContainer"
-            cardContainer.innerHTML = 
-            `
- <div class="card" style="width: 18rem;" >
-                <img src="${data.image}" class="card-img-top">
-                <div class="card-body">
- <h5 class="título-tarjeta">${datos.nombre}</h5>
- <ul class="grupo-lista">
- <li class="list-group-item">Especie: ${data.especie} </li>
-                        <li class="list-group-item">Status: ${data.status} </li>
- <li class="list-group-item">Genero: ${data.género} </li>
-                    </ul>
-                </div>
-            </div>
-            `
-        }
-    };
-
-    Envía la solicitud
-    API.Enviar();
-
+function getData() {
+  const request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (request.readyState == 4 && request.status == 200) {
+      data = JSON.parse(request.responseText); // Almacenar los datos obtenidos en 'data'
+      changeVideo(); // Llamar a changeVideo() después de obtener los datos por primera vez
+    }
+  }
+  request.open("GET", "ajax.json");
+  request.send();
 }
+
+function changeVideo() {
+  if (!data) {
+    getData(); // Obtener datos si aún no se han cargado
+    return;
+  }
+
+  titleArea.innerHTML = data[number].title;
+  contentArea.innerHTML = data[number].content;
+  videoArea.setAttribute("src", data[number].url);
+
+  number = (number + 1) % data.length; // Incrementar 'number' circularmente
+}
+
+button.addEventListener('click', changeVideo); // Listener para el botón "Cambiar video"
+window.onload = getData; // Obtener datos al cargar la página por primera vez

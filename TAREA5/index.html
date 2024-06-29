@@ -1,28 +1,75 @@
-! DOCTYPE html>
-<html lang="es">
-  <cabeza>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clase Ajax</title>
-    <script defer src="./script.js"></script>
-    <enlace
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="hoja de estilo"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anónimo"
-    />
-  </cabeza>
-  <cuerpo>
 
-      <div class="d-flex justify-content-center mt-4">
-        <h1>Semana 4 - AJAX - Rick y Morty</h1>
-      </Div>
-
-      <div class="d-flex justify-content-center mt-4">
-        <button type="button" class="btn btn-primary" id="btnGetInfo">Obtener información</button>
-      </Div>
-
-      <div class="d-flex justify-content-center mt-4" id="cardContainer"></div>
-
-  </cuerpo>
-</HTML>
+Copiar código
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajax Example</title>
+  <style>
+    /* Estilos opcionales para mejorar la presentación */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    #video {
+      width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ajax Example</h1>
+  
+  <div>
+    <button id="btn">Cambiar video</button>
+  </div>
+  
+  <div>
+    <h2 id="title">Título del video</h2>
+    <p id="content">Contenido del video</p>
+    <video id="video" controls>
+      <!-- Aquí se cambiará el src del video -->
+      Su navegador no soporta video HTML5.
+    </video>
+  </div>
+  
+  <script>
+    let number = 0;
+    let data = null; // Variable para almacenar los datos obtenidos de ajax.json
+    const button = document.getElementById('btn');
+    const titleArea = document.getElementById("title");
+    const contentArea = document.getElementById("content");
+    const videoArea = document.getElementById("video");
+  
+    function getData() {
+      const request = new XMLHttpRequest();
+      request.onreadystatechange = function() {
+        if (request.readyState == 4 && request.status == 200) {
+          data = JSON.parse(request.responseText); // Almacenar los datos obtenidos en 'data'
+          changeVideo(); // Llamar a changeVideo() después de obtener los datos por primera vez
+        }
+      }
+      request.open("GET", "ajax.json");
+      request.send();
+    }
+  
+    function changeVideo() {
+      if (!data) {
+        getData(); // Obtener datos si aún no se han cargado
+        return;
+      }
+  
+      titleArea.innerHTML = data[number].title;
+      contentArea.innerHTML = data[number].content;
+      videoArea.setAttribute("src", data[number].url);
+  
+      number = (number + 1) % data.length; // Incrementar 'number' circularmente
+    }
+  
+    button.addEventListener('click', changeVideo); // Listener para el botón "Cambiar video"
+    window.onload = getData; // Obtener datos al cargar la página por primera vez
+  </script>
+</body>
+</html>
