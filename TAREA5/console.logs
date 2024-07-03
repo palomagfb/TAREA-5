@@ -1,0 +1,14 @@
+function getData() {
+  const request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    console.log('Ready state:', request.readyState);
+    console.log('Status:', request.status);
+    if (request.readyState == 4 && request.status == 200) {
+      data = JSON.parse(request.responseText);
+      console.log('Data loaded:', data);
+      displayData();
+    }
+  };
+  request.open("GET", "ajax.json");
+  request.send();
+}
